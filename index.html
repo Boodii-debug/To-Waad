@@ -34,30 +34,44 @@
     text-align:center;
   }
 
-  /* ---------- MUSIC TOGGLE BUTTON ---------- */
-  .music-control {
+  /* ---------- MUSIC TOGGLE ---------- */
+  .music-toggle {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
-    z-index: 9999;
-    background: rgba(28, 17, 30, 0.85);
-    border: 1px solid rgba(212, 175, 55, 0.4);
+    z-index: 1000;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--gold);
     color: var(--gold);
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    font-size: 1.2rem;
+    padding: 8px 16px;
+    border-radius: 20px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    transition: transform 0.2s, background 0.2s;
+    font-family: inherit;
+    font-size: 0.85rem;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
   }
-  .music-control:hover {
-    transform: scale(1.1);
-    background: rgba(212, 175, 55, 0.2);
+  .music-toggle:hover {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  /* ---------- MUSIC ARROW INDICATOR ---------- */
+  .music-arrow {
+    position: fixed;
+    top: 24px;
+    right: 140px; /* Positions it just to the left of your music button */
+    z-index: 1000;
+    color: var(--gold);
+    font-size: 1.2rem;
+    font-weight: bold;
+    pointer-events: none; /* Keeps it from blocking clicks */
+    animation: pointRight 1.5s ease-in-out infinite;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  }
+  @keyframes pointRight {
+    0%, 100% { transform: translateX(0); opacity: 0.4; }
+    50% { transform: translateX(-8px); opacity: 1; }
   }
 
   /* ---------- FLOATING HEARTS BACKGROUND ---------- */
@@ -464,14 +478,13 @@
 </head>
 <body>
 
-<!-- BACKGROUND AUDIO -->
-<!-- Replace YOUR_MUSIC_FILE.mp3 with your actual audio file link -->
-<audio id="bgMusic" loop preload="auto">
-  <source src="YOUR_MUSIC_FILE.mp3" type="audio/mpeg">
-</audio>
+<div class="music-arrow" id="musicArrow">👉</div>
+<button class="music-toggle" id="musicBtn">🎵 Press here</button>
 
-<!-- FLOATING MUSIC TOGGLE BUTTON -->
-<button class="music-control" id="musicToggle" title="Toggle Music">🎵</button>
+<audio id="bgMusic" loop>
+  <source src="https://raw.githubusercontent.com/Boodii-debug/for-rayan/main/music.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 <!-- FLOATING HEARTS BACKGROUND -->
 <div class="hearts" id="hearts"></div>
@@ -571,40 +584,21 @@
 <footer>made for Waad, with admiration</footer>
 
 <script>
-  // ---------- AUDIO PLAYER LOGIC ----------
+  // ---------- MUSIC TOGGLE CONTROLLER ----------
+  const musicBtn = document.getElementById('musicBtn');
   const bgMusic = document.getElementById('bgMusic');
-  const musicToggle = document.getElementById('musicToggle');
-  let isPlaying = false;
+  const musicArrow = document.getElementById('musicArrow');
 
-  function toggleAudio() {
-    if (isPlaying) {
-      bgMusic.pause();
-      musicToggle.textContent = '🔇';
-      isPlaying = false;
+  musicBtn.addEventListener('click', () => {
+    if (bgMusic.paused) {
+      bgMusic.play();
+      musicBtn.textContent = '⏸ Pause';
+      if (musicArrow) musicArrow.style.display = 'none';
     } else {
-      bgMusic.play().then(() => {
-        musicToggle.textContent = '🎵';
-        isPlaying = true;
-      }).catch(err => console.log("Audio play blocked until interaction:", err));
+      bgMusic.pause();
+      musicBtn.textContent = '🎵 Press here';
     }
-  }
-
-  musicToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleAudio();
   });
-
-  // Start music automatically on the user's first interaction anywhere on the page
-  function startMusicOnFirstInteraction() {
-    if (!isPlaying) {
-      bgMusic.play().then(() => {
-        musicToggle.textContent = '🎵';
-        isPlaying = true;
-      }).catch(err => console.log("Autoplay prevented:", err));
-    }
-    document.removeEventListener('click', startMusicOnFirstInteraction);
-  }
-  document.addEventListener('click', startMusicOnFirstInteraction);
 
   // ⚠️ REPLACE THIS WITH YOUR FORMSPREE ENDPOINT URL
   const FORMSPREE_URL = "https://formspree.io/f/mwvgarbg";
