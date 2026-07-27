@@ -34,46 +34,6 @@
     text-align:center;
   }
 
-  /* ---------- MUSIC TOGGLE ---------- */
-  .music-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: rgba(212, 175, 55, 0.1);
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.85rem;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-  }
-  .music-toggle:hover {
-    background: var(--gold);
-    color: var(--bg);
-  }
-  /* ---------- MUSIC ARROW INDICATOR ---------- */
-  .music-arrow {
-    position: fixed;
-    top: 24px;
-    right: 140px; /* Positions it just to the left of your music button */
-    z-index: 1000;
-    color: var(--gold);
-    font-size: 1.2rem;
-    font-weight: bold;
-    pointer-events: none; /* Keeps it from blocking clicks */
-    animation: pointRight 1.5s ease-in-out infinite;
-    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
-  }
-  @keyframes pointRight {
-    0%, 100% { transform: translateX(0); opacity: 0.4; }
-    50% { transform: translateX(-8px); opacity: 1; }
-  }
-
   /* ---------- FLOATING HEARTS BACKGROUND ---------- */
   .hearts{
     position:fixed;
@@ -474,6 +434,46 @@
     font-size:0.8rem;
     letter-spacing:0.1em;
   }
+
+  /* ---------- MUSIC TOGGLE ---------- */
+  .music-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+  }
+  .music-toggle:hover {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  /* ---------- MUSIC ARROW INDICATOR ---------- */
+  .music-arrow {
+    position: fixed;
+    top: 24px;
+    right: 140px; /* Positions it just to the left of your music button */
+    z-index: 1000;
+    color: var(--gold);
+    font-size: 1.2rem;
+    font-weight: bold;
+    pointer-events: none; /* Keeps it from blocking clicks */
+    animation: pointRight 1.5s ease-in-out infinite;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  }
+  @keyframes pointRight {
+    0%, 100% { transform: translateX(0); opacity: 0.4; }
+    50% { transform: translateX(-8px); opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -482,7 +482,7 @@
 <button class="music-toggle" id="musicBtn">🎵 Press here</button>
 
 <audio id="bgMusic" loop>
-  <source src="https://raw.githubusercontent.com/Boodii-debug/for-rayan/main/music.mp3" type="audio/mpeg">
+  <source src="music.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
 </audio>
 
@@ -584,21 +584,28 @@
 <footer>made for Waad, with admiration</footer>
 
 <script>
-  // ---------- MUSIC TOGGLE CONTROLLER ----------
+  // Background Music Toggle
   const musicBtn = document.getElementById('musicBtn');
-  const bgMusic = document.getElementById('bgMusic');
-  const musicArrow = document.getElementById('musicArrow');
+  const music = document.getElementById('bgMusic');
+  const musicArrow = document.getElementById('musicArrow'); // Select the arrow
 
-  musicBtn.addEventListener('click', () => {
-    if (bgMusic.paused) {
-      bgMusic.play();
-      musicBtn.textContent = '⏸ Pause';
-      if (musicArrow) musicArrow.style.display = 'none';
-    } else {
-      bgMusic.pause();
-      musicBtn.textContent = '🎵 Press here';
-    }
-  });
+  if (musicBtn && music) {
+    musicBtn.addEventListener('click', () => {
+      // Hide the pointing arrow forever once she clicks the music button
+      if (musicArrow) {
+        musicArrow.style.display = 'none';
+      }
+
+      if (music.paused) {
+        music.volume = 0.4;
+        music.play().catch(error => console.log("Playback restriction handled:", error));
+        musicBtn.textContent = '⏸ Mute';
+      } else {
+        music.pause();
+        musicBtn.textContent = '🎵 Press here';
+      }
+    });
+  }
 
   // ⚠️ REPLACE THIS WITH YOUR FORMSPREE ENDPOINT URL
   const FORMSPREE_URL = "https://formspree.io/f/mwvgarbg";
