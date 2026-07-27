@@ -34,6 +34,32 @@
     text-align:center;
   }
 
+  /* ---------- MUSIC TOGGLE BUTTON ---------- */
+  .music-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: rgba(28, 17, 30, 0.85);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: var(--gold);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform 0.2s, background 0.2s;
+  }
+  .music-control:hover {
+    transform: scale(1.1);
+    background: rgba(212, 175, 55, 0.2);
+  }
+
   /* ---------- FLOATING HEARTS BACKGROUND ---------- */
   .hearts{
     position:fixed;
@@ -438,6 +464,15 @@
 </head>
 <body>
 
+<!-- BACKGROUND AUDIO -->
+<!-- Replace YOUR_MUSIC_FILE.mp3 with your actual audio file link -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="YOUR_MUSIC_FILE.mp3" type="audio/mpeg">
+</audio>
+
+<!-- FLOATING MUSIC TOGGLE BUTTON -->
+<button class="music-control" id="musicToggle" title="Toggle Music">🎵</button>
+
 <!-- FLOATING HEARTS BACKGROUND -->
 <div class="hearts" id="hearts"></div>
 
@@ -536,6 +571,41 @@
 <footer>made for Waad, with admiration</footer>
 
 <script>
+  // ---------- AUDIO PLAYER LOGIC ----------
+  const bgMusic = document.getElementById('bgMusic');
+  const musicToggle = document.getElementById('musicToggle');
+  let isPlaying = false;
+
+  function toggleAudio() {
+    if (isPlaying) {
+      bgMusic.pause();
+      musicToggle.textContent = '🔇';
+      isPlaying = false;
+    } else {
+      bgMusic.play().then(() => {
+        musicToggle.textContent = '🎵';
+        isPlaying = true;
+      }).catch(err => console.log("Audio play blocked until interaction:", err));
+    }
+  }
+
+  musicToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleAudio();
+  });
+
+  // Start music automatically on the user's first interaction anywhere on the page
+  function startMusicOnFirstInteraction() {
+    if (!isPlaying) {
+      bgMusic.play().then(() => {
+        musicToggle.textContent = '🎵';
+        isPlaying = true;
+      }).catch(err => console.log("Autoplay prevented:", err));
+    }
+    document.removeEventListener('click', startMusicOnFirstInteraction);
+  }
+  document.addEventListener('click', startMusicOnFirstInteraction);
+
   // ⚠️ REPLACE THIS WITH YOUR FORMSPREE ENDPOINT URL
   const FORMSPREE_URL = "https://formspree.io/f/mwvgarbg";
 
